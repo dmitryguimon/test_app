@@ -32,8 +32,7 @@ users = {}
 def load_user(user_id):
     return users.get(user_id)
 
-@app.before_first_request
-def initialize():
+with app.app_context():
     init_db()
 
 @app.route("/")
