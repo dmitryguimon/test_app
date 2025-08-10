@@ -3,6 +3,8 @@ from models import init_db, get_all_comments, add_comment
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user, UserMixin
 from flask_dance.contrib.google import make_google_blueprint, google
 import os
+const port = process.env.port || PORT;
+
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "supersekrit")  # Use a strong secret in production!
@@ -78,4 +80,4 @@ def authorized():
     return redirect(url_for("index"))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True,  port=port)
