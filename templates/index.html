@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Threaded Comments App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Threaded Comments</h1>
+    {% if current_user.is_authenticated %}
+        <p>Hello, {{ current_user.name }}! <a href="{{ url_for('logout') }}">Logout</a></p>
+        <form method="post" action="{{ url_for('add_comment_route') }}">
+            <textarea name="content" placeholder="What do you want to say?" required></textarea>
+            <input type="hidden" name="parent_id" value="">
+            <button type="submit">Add Comment</button>
+        </form>
+    {% else %}
+        <a href="{{ url_for('login') }}">Login with Google</a>
+    {% endif %}
+    <hr>
+    <div>
+        {% macro render_comments(comments) -%}
+            <ul>
+            {% for comment in comments %}
+                <li>
+                    <strong>{{ comment.author }}</strong> ({{ comment.created_at }}):<br>
+                    {{ comment.content }}
+                    {% if current_user.is_authenticated %}
+                        <form method="post" action="{{ url_for('add_comment_route') }}" style="margin-top:5px; margin-bottom:10px;">
+                            <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                            <input type="text" name="content" placeholder="Reply..." required>
+                            <button type="submit">Reply</button>
+                        </form>
+                    {% endif %}
+                    {% if comment.children %}
+                        {{ render_comments(comment.children) }}
+                    {% endif %}
+                </li>
+            {% endfor %}
+            </ul>
+        {%- endmacro %}
+        {{ render_comments(comments) }}
+    </div>
+</body>
+</html>
